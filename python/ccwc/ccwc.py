@@ -13,23 +13,39 @@ def main():
 
     total_words, total_lines, total_bytes = 0, 0, 0
     
+    no_flags = not args.word and not args.line and not args.byte
+
     for input_file in args.input_files:
-        if args.word:
+        if no_flags:
             total_words += process_word_count(input_file) 
-        if args.line:
             total_lines += process_line_count(input_file) 
-        if args.byte:
             total_bytes += process_byte_count(input_file) 
+        else:
+            if args.word:
+                total_words += process_word_count(input_file) 
+            if args.line:
+                total_lines += process_line_count(input_file) 
+            if args.byte:
+                total_bytes += process_byte_count(input_file) 
         
         print("", input_file)
 
-        """
-        if not args.word and not args.line and not args.byte:
-            process_line_count(args.input_files) 
-            process_word_count(args.input_files) 
-            process_byte_count(args.input_files) 
-            """
+    if len(args.input_files) > 1:
+        if no_flags:
+            print(f"  {total_words}  {total_lines}  {total_bytes}", end="")
+        else:
+            if args.word:
+                print("  ", end="")
+                print(f"{total_words}", end="")
+            if args.line:
+                print("  ", end="")
+                print(f"{total_lines}", end="")
+            if args.byte:
+                print("  ", end="")
+                print(f"{total_bytes}", end="")
+        print(" total")
         
+
 def process_word_count(file):
     print("  ", end="")
     word_count = 0
