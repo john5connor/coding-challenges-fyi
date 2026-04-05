@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 
 def main():
@@ -15,20 +16,48 @@ def main():
     
     no_flags = not args.word and not args.line and not args.byte
 
-    for input_file in args.input_files:
-        if no_flags:
-            total_words += process_word_count(input_file) 
-            total_lines += process_line_count(input_file) 
-            total_bytes += process_byte_count(input_file) 
-        else:
-            if args.word:
+    if sys.stdin and len(args.input_files) == 0:
+        with open("temp.txt", "w") as temp:
+            for line in sys.stdin:
+                temp.write(line)
+            if no_flags:
+                temp.seek(0)
+                total_words += process_word_count(temp.name) 
+                temp.seek(0)
+                total_lines += process_line_count(temp.name) 
+                temp.seek(0)
+                total_bytes += process_byte_count(temp.name) 
+            else:
+                if args.word:
+                    temp.seek(0)
+                    total_words += process_word_count(temp.name) 
+                
+                if args.line:
+                    temp.seek(0)
+                    total_lines += process_line_count(temp.name) 
+
+                if args.byte:
+                    temp.seek(0)
+                    total_bytes += process_byte_count(temp.name) 
+
+            print("", temp.name)
+
+        os.remove("temp.txt")
+    else:
+        for input_file in args.input_files:
+            if no_flags:
                 total_words += process_word_count(input_file) 
-            if args.line:
                 total_lines += process_line_count(input_file) 
-            if args.byte:
                 total_bytes += process_byte_count(input_file) 
-        
-        print("", input_file)
+            else:
+                if args.word:
+                    total_words += process_word_count(input_file) 
+                if args.line:
+                    total_lines += process_line_count(input_file) 
+                if args.byte:
+                    total_bytes += process_byte_count(input_file) 
+            
+            print("", input_file)
 
     if len(args.input_files) > 1:
         if no_flags:
